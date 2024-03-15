@@ -3,8 +3,7 @@
 
 int main(int argc, char *argv[])
 {
-    // Agregar código aquí.
-    printf("Hola mundo \n");
-    // Termina la ejecución del programa.
+
+    printf("%s\n", argv[1]);
     exit(EXIT_SUCCESS);
 }
