@@ -66,21 +66,25 @@ void runcmd(struct cmd *cmd)
             ecmd = (struct execcmd *) cmd;
             if (ecmd->argv[0] == 0)
                 exit(0);
-            fprintf(stderr, "exec not implemented\n");
+            //execvp(ecmd->argv[0], ecmd->argv);
+            execvp(ecmd->argv[0], ecmd->argv);
+            fprintf(stderr, "No se pudo ejecutar el comando: \"%s\"\n", ecmd->argv[0]);
             // Your code here ...
             break;
 
         case REDIR:
-            fprintf(stderr, "redir not implemented\n");
-            // Your code here ...
+
             rcmd = (struct redircmd *) cmd;
+            close(rcmd->fd);
+            if(open(rcmd->file, rcmd->mode, 0644) == -1){
+                perror("Redir");
+            }
             runcmd(rcmd->cmd);
             break;
 
         case PIPE:
-            fprintf(stderr, "pipe not implemented\n");
-            // Your code here ...
             pcmd = (struct pipecmd *) cmd;
+            
             runcmd(pcmd->left);
             break;
     }
