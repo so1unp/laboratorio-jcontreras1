@@ -82,6 +82,9 @@ argstr(int n, char **pp)
   return fetchstr(addr, pp);
 }
 
+//Numero de la vida
+extern int sys_answer(void);
+
 extern int sys_chdir(void);
 extern int sys_close(void);
 extern int sys_dup(void);
@@ -127,7 +130,8 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
-[SYS_trace]   sys_trace
+[SYS_trace]   sys_trace,
+[SYS_answer]   sys_answer
 };
 
 extern int trace;
@@ -154,7 +158,8 @@ static char* syscalls_names[] = {
 [SYS_link]    "sys_link",
 [SYS_mkdir]   "sys_mkdir",
 [SYS_close]   "sys_close",
-[SYS_trace]   "sys_trace"
+[SYS_trace]   "sys_trace",
+[SYS_answer]   "sys_answer"
 };
 
 void

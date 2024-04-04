@@ -9,6 +9,12 @@
 
 int trace;
 
+//Este devuelve el sentido de la vida, el universo y todo lo demás
+int 
+sys_answer(void){
+  return 42;
+}
+
 int
 sys_fork(void)
 {

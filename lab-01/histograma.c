@@ -8,7 +8,8 @@ int main(int argc, char *argv[])
     int cantidad[cantdidadMaximaLetras];
     int auxLength = 0;
     int caracter;
-    for (int i = 0; i <= cantdidadMaximaLetras; i++){
+    int i;
+    for (i = 0; i <= cantdidadMaximaLetras; i++){
         cantidad[i] = 0;
     }
     
@@ -31,16 +32,16 @@ int main(int argc, char *argv[])
     //me mando una recorrida para ver cual es la longitud máxima. 
     // Asi no hago un histograma grande al divino botón
     int indicePalabraMasLarga = 0;
-    for(int i = 0; i < cantdidadMaximaLetras; i++){
+    for(i = 0; i < cantdidadMaximaLetras; i++){
         if(cantidad[i] > 0){
             indicePalabraMasLarga = i;
         }
     }
-
-    for (int i = 1; i <= indicePalabraMasLarga; i++){
+    int j;
+    for (i = 1; i <= indicePalabraMasLarga; i++){
         //printf("Con %d, %d palabras\n", i,cantidad[i]);
         printf("%d ", i);
-        for(int j = 0; j < cantidad[i]; j++){
+        for(j = 0; j < cantidad[i]; j++){
              printf("*");
         }
         printf("\n");
