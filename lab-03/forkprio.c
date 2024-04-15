@@ -10,7 +10,7 @@
 #define MIN_HIJOS 1
 #define PRIORIDAD_MINIMA 20
 
-#define MAX_SEGS 10
+#define MAX_SEGS 35
 #define MIN_SEGS 0
 
 
@@ -47,14 +47,12 @@ void alarm_handler(int signal) {
         //No hacer nada, porque sería propiedad del padre.
         break;
 	case SIGTERM:
-		printf("%d: Mi trabajo aquí ya está hecho...\n", getpid());
+        printf("Child %d (nice %2d):\t%3li\n", getpid(), getpriority(PRIO_PROCESS, 0), usage.ru_utime.tv_sec + usage.ru_stime.tv_sec);
         exit(EXIT_SUCCESS);
 		break;
 	case SIGUSR1:
 		//Imprimi algo de info
-        
        	printf("Child %d (nice %2d):\t%3li\n", getpid(), getpriority(PRIO_PROCESS, 0), usage.ru_utime.tv_sec + usage.ru_stime.tv_sec);
-       	// printf("Child %d (nice %2d):\t%3li\n", getpid(), getpriority(PRIO_PROCESS, 0), 1000000000000);
 		break;
 	case SIGUSR2:
 		//Bajate un cacho la prior
@@ -96,8 +94,7 @@ int main(int argc, char *argv[])
     char *txtReduccionPrioridad = (prioridad == 0) ? "Sin" : "Con"; 
     printf("Creando %d hijos, con una ejecucion de %d segundos. %s reducción de prioridad.\n", nHijos, segundosEjecucion, txtReduccionPrioridad); 
 
-    /**Creación de hijos*/
-    
+    /**Creación de hijos*/    
     int indiceHijo;
     int auxPrioridad = 0;
 
@@ -121,24 +118,21 @@ int main(int argc, char *argv[])
     }
     
 	int i, j;
-	/**Tiempo determinado o forever*/
+	//Tiempo determinado o forever
 	if(segundosEjecucion == 0){
 		for(;;){
 			sleep(1);
-			for(j = 0; j < nHijos; j++){
-				kill(hijos[j], SIGUSR1);
-			}
 		}
 	}else{
 		for(i = 0; i < segundosEjecucion; i++){
 			sleep(1);
 			for(j = 0; j < nHijos; j++){
-				kill(hijos[j], SIGUSR1);
+				//kill(hijos[j], SIGUSR1);  //Descomentar para que cada 1 segundo muestren su estado
 			}
 		}
 	}
-
-
+    
+    //Pasado el tiempo (que no sea forever) mata a los hijos
     for (indiceHijo = 0; indiceHijo < nHijos; indiceHijo++) {
         kill(hijos[indiceHijo], SIGTERM);
         waitpid(hijos[indiceHijo], 0, 0);
