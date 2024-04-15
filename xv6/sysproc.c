@@ -50,6 +50,12 @@ sys_getpid(void)
   return myproc()->pid;
 }
 
+int 
+sys_getppid(void)
+{
+  return myproc()->parent->pid;
+}
+
 int
 sys_sbrk(void)
 {
