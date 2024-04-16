@@ -108,6 +108,7 @@ void            exit(void);
 int             fork(void);
 int             growproc(int);
 int             kill(int);
+int             process_count(void);
 struct cpu*     mycpu(void);
 struct proc*    myproc();
 void            pinit(void);
@@ -120,6 +121,7 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
+
 
 // swtch.S
 void            swtch(struct context**, struct context*);

@@ -26,6 +26,20 @@ pinit(void)
   initlock(&ptable.lock, "ptable");
 }
 
+int
+process_count(void){
+
+  struct proc *p;
+  int count = 0;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+     if(p->state != UNUSED)
+        count++;
+  }
+  release(&ptable.lock);
+  return count;
+}
+
 // Must be called with interrupts disabled
 int
 cpuid() {

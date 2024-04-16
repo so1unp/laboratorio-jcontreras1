@@ -15,6 +15,11 @@ sys_answer(void){
   return 42;
 }
 
+int 
+sys_pscnt(void){
+  return process_count();
+}
+
 int
 sys_fork(void)
 {
