@@ -23,7 +23,7 @@ void *write_buffer(void *thread_id) {
     for (i = 0; i < items; i++) {   
         // Escribe el mismo valor en el mismo lugar varias veces.
         // Asi se consumo tiempo de CPU para ocupar lo más posible el quantum.
-        for(j= 0; j< 0xFFFFFF; j++) { 
+        for(j= 0; j< 0x1FFFFFF; j++) { 
             buf[pos] = (int) id;
         }
         pos = pos + 1;
@@ -87,11 +87,12 @@ int main(int argc, char *argv[]) {
 
     // Indica que la política de planificación será Round Robin.
     pthread_attr_setschedpolicy(&attr, sched_policy);
+    // pthread_attr_setschedpolicy(&attr, SCHED_RR);
 
     // Indica el nivel de prioridad que tendrá el hilo creado utilizando attr.
     param.sched_priority = 1;
     pthread_attr_setschedparam(&attr, &param);
-
+    //printf('%d\n',sched_policy);
     // Indica que el hilo creado utilizando el atributo attr debe ejecutar
     // siempre en la CPU 0.
     // COMPLETAR: usar CPU_ZERO, CPU_SET y pthread_attr_setaffinity_np()
@@ -104,7 +105,7 @@ int main(int argc, char *argv[]) {
     // Crea los hilos.
     // COMPLETAR
      for (i = 0; i < count; i++) {
-        if (pthread_create(&threads[i], NULL, write_buffer, (void *)(long)i) != 0) {
+        if (pthread_create(&threads[i], &attr, write_buffer, (void *)(long)i) != 0) {
             perror("phtread_create");
             exit(EXIT_FAILURE);
         }
