@@ -42,7 +42,7 @@ thread_schedule(void)
 {
   thread_p t;
 
-  /* Find another runnable thread. */
+  /* Find another runnable thread. ACA HAY QUE MODIFICAR*/
   next_thread = 0;
   for (t = all_thread; t < all_thread + MAX_THREAD; t++) {
     if (t->state == RUNNABLE && t != current_thread) {

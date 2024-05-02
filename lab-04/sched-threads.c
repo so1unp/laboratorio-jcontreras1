@@ -34,7 +34,7 @@ void *write_buffer(void *thread_id) {
 
 int main(int argc, char *argv[]) {
     int i, sched_policy;
-    void *status;
+    //void *status;
 
     if (argc != 4) {
         fprintf(stderr, "Uso: %s [-R | -F] hilos items\n", argv[0]);
@@ -83,23 +83,40 @@ int main(int argc, char *argv[]) {
     // Indica que al crear un hilo usando attr como parámetros, este debe
     // utilizar la política de planificación indicada en dichos parámetros.
     // COMPLETAR: pthread_attr_setinheritsched()
+    pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
 
     // Indica que la política de planificación será Round Robin.
-    // COMPLETAR: pthread_attr_setschedpolicy()
+    pthread_attr_setschedpolicy(&attr, sched_policy);
 
     // Indica el nivel de prioridad que tendrá el hilo creado utilizando attr.
     param.sched_priority = 1;
-    // COMPLETAR: pthread_attr_setschedparam()
+    pthread_attr_setschedparam(&attr, &param);
 
     // Indica que el hilo creado utilizando el atributo attr debe ejecutar
     // siempre en la CPU 0.
     // COMPLETAR: usar CPU_ZERO, CPU_SET y pthread_attr_setaffinity_np()
+    cpu_set_t mask;
+    CPU_ZERO(&mask);
+    CPU_SET(0, &mask);
+    sched_setaffinity(0, sizeof(mask), &mask);
+    pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &mask);
 
     // Crea los hilos.
     // COMPLETAR
+     for (i = 0; i < count; i++) {
+        if (pthread_create(&threads[i], NULL, write_buffer, (void *)(long)i) != 0) {
+            perror("phtread_create");
+            exit(EXIT_FAILURE);
+        }
+    }
 
     // Espera a que terminen todos los hilos.
-    // COMPLETAR
+    for (i = 0; i < count; i++) {
+        if (pthread_join(threads[i], NULL) != 0) {
+            perror("pthread_join");
+            exit(EXIT_FAILURE);
+        }
+    }
 
     // Imprime el buffer.
     for (i = 0; i < count * items; i++) {
