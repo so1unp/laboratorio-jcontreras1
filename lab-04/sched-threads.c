@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
     cpu_set_t mask;
     CPU_ZERO(&mask);
     CPU_SET(0, &mask);
-    sched_setaffinity(0, sizeof(mask), &mask);
+    // sched_setaffinity(0, sizeof(mask), &mask);
     pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &mask);
 
     // Crea los hilos.
