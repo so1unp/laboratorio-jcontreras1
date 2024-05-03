@@ -14,11 +14,11 @@ struct thread {
   char stack[STACK_SIZE]; /* the thread's stack */
   int  state;             /* FREE, RUNNING, RUNNABLE */
 };
-
 typedef struct thread thread_t, *thread_p;
 
 static thread_t all_thread[MAX_THREAD];
 
+//static thread_p posMemoriaJona;
 thread_p  current_thread;
 thread_p  next_thread;
 
@@ -44,6 +44,7 @@ thread_schedule(void)
 
   /* Find another runnable thread. ACA HAY QUE MODIFICAR*/
   next_thread = 0;
+  //posMemoriaJona = all_thread;
   for (t = all_thread; t < all_thread + MAX_THREAD; t++) {
     if (t->state == RUNNABLE && t != current_thread) {
       next_thread = t;
