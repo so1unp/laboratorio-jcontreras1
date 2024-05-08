@@ -1,0 +1,14 @@
+### 2 - ¿Por qué basta con ejecutar popa para continuar con la ejecución de next_thread?
+
+Porque popal setea todos los registros necesarios del nuevo hilo "next_thread" para su ejecución.
+
+### 3 - ¿Qué tipo de política de planificación se implementa? Justificar.
+
+Round Robin. Ya que al finalizar la ejecución, el print mostró una porcion de cpu muy balanceada para cada hilo 
+
+### 4 - La implementación tiene una limitación: si ejecutamos más de dos hilos, el tercero no se ejecuta hasta 
+        que finalicen los dos primeros. Indicar por qué sucede esto y modificar el código para solucionarlo.
+
+El algoritmo que recorre los hilos para seguir ejecutando comienza en 0. Cuando llegue al límite se termina. 
+Si yo hago que comience en 1 en lugar de 0, y lo controlo con una segunda instrucción de control (operación 
+módulo), cuando llegue al fin de MAX_THREAD, vuelve a comenzar.
