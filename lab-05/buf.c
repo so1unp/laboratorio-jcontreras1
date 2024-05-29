@@ -67,6 +67,7 @@ static void* consumer(void *p)
         pthread_mutex_unlock(&mutex);
         sem_post(&sem_prod);
         // Espera una cantidad aleatoria de microsegundos.
+        printf("%d\n", rand() % params->wait_prod);
         usleep(rand() % params->wait_cons);
     }
 
