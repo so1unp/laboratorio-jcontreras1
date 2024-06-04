@@ -18,7 +18,6 @@ int main(void) {
     p = (char*) malloc(sizeof(char) * 8192);
 
     pid_t pid = fork();
-
     // Esperamos la señal SIGUSR1
     pause();
 
@@ -26,8 +25,12 @@ int main(void) {
         // Agregar aquí el código pedido en el ejercicio.
 
         // Esperamos la señal SIGUSR1
+        
+        
         pause();
     } else {
+        *p = 'a';
+        a++;
         // Esperamos la señal SIGUSR1
         pause();
     }
