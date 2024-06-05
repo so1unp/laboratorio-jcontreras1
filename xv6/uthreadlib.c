@@ -15,7 +15,7 @@ struct thread {
   int  state;             /* FREE, RUNNING, RUNNABLE */
 };
 typedef struct thread thread_t, *thread_p;
-
+static int lastIndex = 0;
 static thread_t all_thread[MAX_THREAD];
 
 //static thread_p posMemoriaJona;
@@ -40,22 +40,31 @@ thread_init(void)
 void 
 thread_schedule(void)
 {
-  thread_p t;
+	thread_p t;
+	int i, currIndex;
+  	/* 
+	Find another runnable thread. 
+	ACA HAY QUE MODIFICAR usar modulo sobre MAX_THREAD
+	Y otro indice externo
+	*/
+  	next_thread = 0;
 
-  /* Find another runnable thread. ACA HAY QUE MODIFICAR*/
-  next_thread = 0;
-  //posMemoriaJona = all_thread;
-  for (t = all_thread; t < all_thread + MAX_THREAD; t++) {
-    if (t->state == RUNNABLE && t != current_thread) {
-      next_thread = t;
-      break;
-    }
-  }
 
-  if (t >= all_thread + MAX_THREAD && current_thread->state == RUNNABLE) {
-    /* The current thread is the only runnable thread; run it. */
-    next_thread = current_thread;
-  }
+  	//for (t = all_thread; t < all_thread + MAX_THREAD; t++) { //original
+	for(i = 1; i < MAX_THREAD; i++){
+		currIndex = (lastIndex + i) % MAX_THREAD;
+		t = &all_thread[currIndex];
+    	if (t->state == RUNNABLE && t != current_thread) {
+      		next_thread = t;
+	   		lastIndex = currIndex;
+      		break;
+    	}
+  	}
+
+  	if (t >= all_thread + MAX_THREAD && current_thread->state == RUNNABLE) {
+  	  /* The current thread is the only runnable thread; run it. */
+  	  next_thread = current_thread;
+  	}
 
   if (next_thread == 0) {
     printf(2, "thread_schedule: no runnable threads\n");
