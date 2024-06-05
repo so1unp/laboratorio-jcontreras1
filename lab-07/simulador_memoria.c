@@ -103,7 +103,6 @@ int main(int argc, char* argv[]){
         mem_secundaria[i].pid = -1;
     }
     vaciarTablaProcesos();
-
     int pid;
     int pagina;
     while (scanf("%d\n%d", &pid, &pagina) != EOF) {
@@ -113,17 +112,13 @@ int main(int argc, char* argv[]){
         }
 
         //Existe proceso?
-        if(!tablaProcesos[pid - 1].existe){
+        if(tablaProcesos[pid - 1].existe == -1){
             //no existe -> crea
-            Proceso nuevoProc;
-            nuevoProc.existe = 1;
-            nuevoProc.pid = pid;
-            nuevoProc.paginas[pagina - 1] = ++posActualMemoria;
-            tablaProcesos[pid - 1] = nuevoProc;
-        }else{
-            //le agrega la nueva pos de memoria
-            tablaProcesos[pid - 1].paginas[pagina - 1] = ++posActualMemoria;
+            printf("Proceso no existe. Crea tabla proceso %d\n", pid);
+            tablaProcesos[pid - 1].existe = 1;
+            tablaProcesos[pid - 1].pid = pid;
         }
+        tablaProcesos[pid - 1].paginas[pagina - 1] = posActualMemoria++;
 
         Pagina pag;
         pag.numero = pagina - 1;
@@ -132,22 +127,27 @@ int main(int argc, char* argv[]){
         mem_fisica[posActualMemoria - 1] = pag;
         j = 2;
         i = j;
-        for ( i = 0; i < PROCESOS; i++){
-            if(tablaProcesos[i].existe > -1){
-                printf("Proceso: %d: [", i);
-                // for(j = 0; j < MEMORIA_VIRTUAL / TAM_PAGINA; j++){
-                //     if(tablaProcesos[i].paginas[j] > -1){
-                //         printf("%d\t", tablaProcesos[i].paginas[j]);
-                //     }
-                // }
-                printf("]\n");
+        
+        
+    //Imprimir procesos y paginas
+    
+
+    for ( i = 0; i < PROCESOS; i++){
+        if(tablaProcesos[i].existe > -1){
+            //Imprime el proceso si existe
+            printf("Proceso %d: ", tablaProcesos[i].pid);
+            for (j = 0; j < MEMORIA_VIRTUAL/TAM_PAGINA; j++) {
+                if (tablaProcesos[i].paginas[j] != -1) {
+                    printf("%d ", tablaProcesos[i].paginas[j]);
+                } else {
+                    printf("- ");
+                }
             }
+            printf("\n");
         }
-        
+
     }
-        
-
-
+    }
 
     exit(EXIT_SUCCESS);
 }
