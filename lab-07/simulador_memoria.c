@@ -46,14 +46,16 @@ El almacenamiento secundario. Mismo formato que la memoría física. Para el eje
 #define PROCESOS 20
 
 typedef struct {
-    int numero;
-    int pid;
-} Pagina;
+	int numero;
+	int pid;
+} Pagina; 
+//fisica
 
 typedef struct {
-    int pid;
-    int existe;
-    int paginas[MEMORIA_VIRTUAL/TAM_PAGINA]; //tabla de páginas abiertas
+	int pid;
+	char memoria; //f fisica, d disco
+	int existe;
+	int paginas[MEMORIA_VIRTUAL/TAM_PAGINA]; //tabla de páginas abiertas
 } Proceso;
 
 
@@ -63,118 +65,155 @@ Pagina mem_secundaria[MEMORIA_SECUNDARIA/TAM_PAGINA];
 
 
 void vaciarTablaProcesos(){
-    int i;
-    for(i = 0; i < PROCESOS; i++){
-        tablaProcesos[i].existe = -1;
-        tablaProcesos[i].pid = -1;
-        int j;
-        for(j = 0; j < MEMORIA_VIRTUAL/TAM_PAGINA; j++){
-            tablaProcesos[i].paginas[j] = -1;
-        }
-    }
+	int i;
+	for(i = 0; i < PROCESOS; i++){
+		tablaProcesos[i].existe = -1;
+		tablaProcesos[i].pid = -1;
+		int j;
+		for(j = 0; j < MEMORIA_VIRTUAL/TAM_PAGINA; j++){
+			tablaProcesos[i].paginas[j] = -1;
+		}
+	}
+}
+
+void vaciarDisco(){
+	int i;
+	for(i = 0; i < MEMORIA_SECUNDARIA/TAM_PAGINA; i++){
+		mem_secundaria[i].numero = -1;
+		mem_secundaria[i].pid = -1;
+	}
+}
+
+void vaciarMemoria(){
+	int i;
+	for(i = 0; i < MEMORIA_FISICA/TAM_PAGINA; i++){
+		mem_fisica[i].numero = -1;
+		mem_fisica[i].pid = -1;
+	}
+}
+
+void imprimirMemoriaFisica(){
+	/* Imprime memoria fisica */
+	int i;
+	printf("Memoria fisica: ");
+	for (i = 0; i < MEMORIA_FISICA/TAM_PAGINA; i++) {
+		if (mem_fisica[i].numero != -1) {
+			printf("%d.%d ", mem_fisica[i].pid, mem_fisica[i].numero);
+		} else {
+			printf("- ");
+		}
+	}
+	printf("\n");
+}
+
+void imprimirMemoriaSecundaria(){
+	//Imprime memoria secundaria
+	printf("Memoria secundaria: ");
+	int i;
+	for (i = 0; i < MEMORIA_SECUNDARIA/TAM_PAGINA; i++) {
+		if (mem_secundaria[i].numero != -1) {
+			printf("%d.%d ", mem_secundaria[i].pid, mem_secundaria[i].numero);
+		} else {
+			printf("- ");
+		}
+	}
+	printf("\n");
 }
 
 
 void usage(char *programa){
-    printf("Uso: %s -f | -l \n", programa);
-    exit(EXIT_FAILURE);
+	printf("Uso: %s -f | -l \n", programa);
+	exit(EXIT_FAILURE);
 }
 int main(int argc, char* argv[]){
 
-    if(argc != 2){
-        usage(argv[0]);
-    }
+	if(argc != 2){
+		usage(argv[0]);
+	}
 
-    if (argv[1][0] != '-') {
-        usage(argv[0]);
-    }
+	if (argv[1][0] != '-') {
+		usage(argv[0]);
+	}
 
-    //char modo = argv[1][1];
-    int posActualMemoria = 0; //
-    int i, j;
-    //Vaciar memoria fisica
-    for (i = 0; i < MEMORIA_FISICA/TAM_PAGINA; ++i) {
-        mem_fisica[i].numero = -1;
-        mem_fisica[i].pid = -1;
-    }
-    //Vaciar disco
-    for (i = 0; i < MEMORIA_SECUNDARIA/TAM_PAGINA; ++i) {
-        mem_secundaria[i].numero = -1;
-        mem_secundaria[i].pid = -1;
-    }
-    vaciarTablaProcesos();
-    int pid;
-    int pagina;
-    while (scanf("%d\n%d", &pid, &pagina) != EOF) {
-        if(pid < 0 || pid > PROCESOS){
-            printf("El pid tiene que estar entre 1 y %d\n", PROCESOS);
-            exit(EXIT_FAILURE);
-        }
+	vaciarMemoria();
+	vaciarDisco();
+	vaciarTablaProcesos();
 
-        //Existe proceso?
-        if(tablaProcesos[pid - 1].existe == -1){
-            //no existe -> crea
-            tablaProcesos[pid - 1].existe = 1;
-            tablaProcesos[pid - 1].pid = pid;
-        }
-        if(tablaProcesos[pid - 1].paginas[pagina - 1] != -1){
-            //pagina ya esta en memoria
-            j = 2;
-            i = j;
-            continue;
-        }
-        tablaProcesos[pid - 1].paginas[pagina - 1] = ++posActualMemoria;
-
-        Pagina pag;
-        pag.numero = pagina - 1;
-        pag.pid = pid;
-
-        mem_fisica[posActualMemoria - 1] = pag;
-        j = 2;
-        i = j;
-        
-        
-    //Imprimir procesos y paginas
-    
+	char modo = argv[1][1];
+	int posActualMemoria = 0; //ESTO ES EL INDICE QUE VA A MANEJAR LA MEMORIA RAM
+	int posActualDisco = 0;
+	int pid;
+	int pagina;
+	int i, j;
+	switch(modo){
+		case 'f':
+			while (scanf("%d\n%d", &pid, &pagina) != EOF) {
+	
+				if(pid < 0 || pid > PROCESOS){
+					printf("El pid tiene que estar entre 1 y %d\n", PROCESOS);
+					exit(EXIT_FAILURE);
+				}
+				//Existe proceso?
+				if(tablaProcesos[pid - 1].existe == -1){
+					//no existe -> crea
+					printf("No existe el proceso. Creando proceso %d\n", pid);
+					tablaProcesos[pid - 1].existe = 1;
+					tablaProcesos[pid - 1].pid = pid;
+					tablaProcesos[pid - 1].memoria = 'f';
+				}
+	   
+	  			if(posActualMemoria >= MEMORIA_FISICA/TAM_PAGINA){
+					//La memoria fisica está llena deberia insertar en disco
+					printf("Memoria llena, reemplazo %d\n", posActualMemoria%(MEMORIA_FISICA/TAM_PAGINA));
+					if(posActualDisco >= MEMORIA_SECUNDARIA/TAM_PAGINA){
+						printf("Disco lleno, capo.\n");
+						break;
+					}
+					mem_secundaria[posActualDisco] = mem_fisica[posActualMemoria%(MEMORIA_FISICA/TAM_PAGINA)];
+					posActualDisco++;
+	  			}
+				//insertar en pos memoria
+				Pagina pag;
+				pag.numero = pagina;
+				pag.pid = pid;
+				mem_fisica[posActualMemoria%(MEMORIA_FISICA/TAM_PAGINA)] = pag;
 
 
-    }
-    /* Imprime tabla de procesos */
-    for ( i = 0; i < PROCESOS; i++){
-        if(tablaProcesos[i].existe > -1){
-            //Imprime el proceso si existe
-            printf("Proceso %d: ", tablaProcesos[i].pid);
-            for (j = 0; j < MEMORIA_VIRTUAL/TAM_PAGINA; j++) {
-                if (tablaProcesos[i].paginas[j] != -1) {
-                    printf("%d ", tablaProcesos[i].paginas[j]);
-                } else {
-                    printf("- ");
-                }
-            }
-            printf("\n");
-        }
+		posActualMemoria++;
+		imprimirMemoriaFisica();
+		imprimirMemoriaSecundaria();
+	}
+			break;
+		case 'l':
+			printf("LRU\n");
+			break;
+		default:
+			usage(argv[0]);
+	}
 
-    }
+	
+	
+	
+	/* Imprime tabla de procesos */
+	for ( i = 0; i < PROCESOS; i++){
+		if(tablaProcesos[i].existe > -1){
+			//Imprime el proceso si existe
+			printf("Proceso %d: ", tablaProcesos[i].pid);
+			for (j = 0; j < MEMORIA_VIRTUAL/TAM_PAGINA; j++) {
+				if (tablaProcesos[i].paginas[j] != -1) {
+					printf("%d ", tablaProcesos[i].paginas[j]);
+				} else {
+					printf("- ");
+				}
+			}
+			printf("\n");
+		}
 
-    /* Imprime memoria fisica */
-    for (i = 0; i < MEMORIA_FISICA/TAM_PAGINA; i++) {
-        if (mem_fisica[i].numero != -1) {
-            printf("%d.%d ", mem_fisica[i].pid, mem_fisica[i].numero);
-        } else {
-            printf("- ");
-        }
-    }
-    printf("\n");
+	}
 
-    //Imprime memoria secundaria
-    for (i = 0; i < MEMORIA_SECUNDARIA/TAM_PAGINA; i++) {
-        if (mem_secundaria[i].numero != -1) {
-            printf("%d.%d ", mem_secundaria[i].pid, mem_secundaria[i].numero);
-        } else {
-            printf("- ");
-        }
-    }
-    printf("\n");
+	imprimirMemoriaFisica();
 
-    exit(EXIT_SUCCESS);
+	
+
+	exit(EXIT_SUCCESS);
 }
