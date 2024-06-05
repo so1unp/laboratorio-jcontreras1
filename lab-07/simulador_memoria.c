@@ -114,11 +114,16 @@ int main(int argc, char* argv[]){
         //Existe proceso?
         if(tablaProcesos[pid - 1].existe == -1){
             //no existe -> crea
-            printf("Proceso no existe. Crea tabla proceso %d\n", pid);
             tablaProcesos[pid - 1].existe = 1;
             tablaProcesos[pid - 1].pid = pid;
         }
-        tablaProcesos[pid - 1].paginas[pagina - 1] = posActualMemoria++;
+        if(tablaProcesos[pid - 1].paginas[pagina - 1] != -1){
+            //pagina ya esta en memoria
+            j = 2;
+            i = j;
+            continue;
+        }
+        tablaProcesos[pid - 1].paginas[pagina - 1] = ++posActualMemoria;
 
         Pagina pag;
         pag.numero = pagina - 1;
@@ -132,6 +137,9 @@ int main(int argc, char* argv[]){
     //Imprimir procesos y paginas
     
 
+
+    }
+    /* Imprime tabla de procesos */
     for ( i = 0; i < PROCESOS; i++){
         if(tablaProcesos[i].existe > -1){
             //Imprime el proceso si existe
@@ -147,7 +155,26 @@ int main(int argc, char* argv[]){
         }
 
     }
+
+    /* Imprime memoria fisica */
+    for (i = 0; i < MEMORIA_FISICA/TAM_PAGINA; i++) {
+        if (mem_fisica[i].numero != -1) {
+            printf("%d.%d ", mem_fisica[i].pid, mem_fisica[i].numero);
+        } else {
+            printf("- ");
+        }
     }
+    printf("\n");
+
+    //Imprime memoria secundaria
+    for (i = 0; i < MEMORIA_SECUNDARIA/TAM_PAGINA; i++) {
+        if (mem_secundaria[i].numero != -1) {
+            printf("%d.%d ", mem_secundaria[i].pid, mem_secundaria[i].numero);
+        } else {
+            printf("- ");
+        }
+    }
+    printf("\n");
 
     exit(EXIT_SUCCESS);
 }
