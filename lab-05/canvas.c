@@ -42,6 +42,9 @@ int main(int argc, char *argv[])
 	}
 
 	char option = argv[1][1];
+	int fd; // File descriptor
+	canvas_t *canvas; //Est. Canvas
+	//i, j; //Para iterar sobre mapa
 
 	switch(option) {
 		case 'w':
@@ -51,7 +54,7 @@ int main(int argc, char *argv[])
             	exit(EXIT_FAILURE);
         	}
 
-			int fd = shm_open(argv[2], O_RDWR, 0666);
+			fd = shm_open(argv[2], O_RDWR, 0666);
     		size_t i;
 			int x, y;
 
@@ -60,7 +63,7 @@ int main(int argc, char *argv[])
         		exit(EXIT_FAILURE);
     		}
 
-    		canvas_t *canvas = mmap(NULL, sizeof(canvas_t), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    		canvas = mmap(NULL, sizeof(canvas_t), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
     		if (canvas == MAP_FAILED){
         		perror("mmap");
@@ -104,22 +107,21 @@ int main(int argc, char *argv[])
             	exit(EXIT_FAILURE);
         	}
 			
-			int fd = shm_open(argv[2], O_RDONLY, 0666);
-			int i,j;
+			fd = shm_open(argv[2], O_RDONLY, 0666);
 
     		if (fd == -1){
         		perror("shm_open");
         		exit(EXIT_FAILURE);
     		}
 
-    		canvas_t *canvas = mmap(NULL, sizeof(canvas_t), PROT_READ, MAP_SHARED, fd, 0);
+    		canvas = mmap(NULL, sizeof(canvas_t), PROT_READ, MAP_SHARED, fd, 0);
 
     		if (canvas == MAP_FAILED){
         		perror("mmap");
         		close(fd);
         		exit(EXIT_FAILURE);
     		}
-
+		int j;
     		for (i = 0; i < HEIGHT; i++){
         		for (j = 0; j < WIDTH; j++){
 					putchar(canvas->canvas[i * WIDTH + j]);
@@ -148,7 +150,7 @@ int main(int argc, char *argv[])
         		exit(EXIT_FAILURE);
 			}
 
-    		canvas_t *canvas = mmap(NULL, sizeof(canvas_t), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    		canvas = mmap(NULL, sizeof(canvas_t), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 
    	 		if (canvas == MAP_FAILED){
         		perror("mmap");
