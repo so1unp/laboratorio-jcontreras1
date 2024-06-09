@@ -67,6 +67,10 @@ int main(int argc, char *argv[])
                 fprintf(stderr, "Error al mapear la memoria compartida.\n");
                 exit(EXIT_FAILURE);
             }
+            if(wordheap->free == 0) {
+                printf("Pila llena.\n");
+                break;
+            }
             sem_wait(&wordheap->empty);
             pthread_mutex_lock(&wordheap->mutex);
             strcpy(wordheap->heap[wordheap->items], argv[3]);
@@ -87,6 +91,10 @@ int main(int argc, char *argv[])
                     fprintf(stderr, "Error al mapear la memoria compartida.\n");
                     exit(EXIT_FAILURE);
                 }
+                if(wordheap->items == 0) {
+                    printf("Pila vacía.\n");
+                    break;
+                }
                 sem_wait(&wordheap->full);
                 pthread_mutex_lock(&wordheap->mutex);
                 wordheap->items--;
@@ -105,6 +113,10 @@ int main(int argc, char *argv[])
                 if (wordheap == MAP_FAILED) {
                     fprintf(stderr, "Error al mapear la memoria compartida.\n");
                     exit(EXIT_FAILURE);
+                }
+                if(wordheap->items == 0) {
+                    printf("Pila vacía.\n");
+                    break;
                 }
                 pthread_mutex_lock(&wordheap->mutex);
                 if(wordheap->items == 0) {
