@@ -33,3 +33,5 @@ SYSCALL(trace)
 SYSCALL(answer)
 SYSCALL(getppid)
 SYSCALL(pscnt)
+SYSCALL(pgcnt)
+

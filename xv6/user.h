@@ -27,6 +27,7 @@ int sleep(int);
 int uptime(void);
 int trace(int);
 int answer(void);
+int pgcnt(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

@@ -24,3 +24,4 @@
 #define SYS_answer 42
 #define SYS_getppid 75
 #define SYS_pscnt   76
+#define SYS_pgcnt   77
