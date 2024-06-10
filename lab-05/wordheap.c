@@ -135,17 +135,19 @@ int main(int argc, char *argv[])
                     fprintf(stderr, "Error al crear la memoria compartida.\n");
                     exit(EXIT_FAILURE);
                 }
-                // printf("llega aca\n");
+                if (ftruncate(shm_fd, sizeof(wordheap_t)) == -1){
+                    perror("ftruncate");
+                    exit(EXIT_FAILURE);
+                }
                 wordheap = mmap(NULL, sizeof(wordheap_t), PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
                 if (wordheap == MAP_FAILED) {
                     fprintf(stderr, "Error al mapear la memoria compartida.\n");
                     exit(EXIT_FAILURE);
                 }
                 // printf("llega aca\n");
-                printf("llega aca\n");
                 wordheap->free = ITEMS - 1;
                 wordheap->items = 0;
-                printf("llega aca\n");
+                // printf("llega aca\n");
                 wordheap->max_word = MAX_WORD; 
                 pthread_mutex_init(&wordheap->mutex, NULL);
                 sem_init(&wordheap->full, 1, 0);
